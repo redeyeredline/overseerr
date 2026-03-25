@@ -1,4 +1,4 @@
-FROM node:18.18.2-alpine AS BUILD_IMAGE
+FROM node:20-alpine AS BUILD_IMAGE
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ RUN \
   case "${TARGETPLATFORM}" in \
   'linux/arm64' | 'linux/arm/v7') \
   apk update && \
-  apk add --no-cache python3 make g++ gcc libc6-compat bash && \
+  apk add --no-cache python3 py3-setuptools make g++ gcc libc6-compat bash && \
   yarn global add node-gyp \
   ;; \
   esac
@@ -35,7 +35,7 @@ RUN touch config/DOCKER
 RUN echo '{"commitTag": "local"}' > committag.json
 
 
-FROM node:18.18.2-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
