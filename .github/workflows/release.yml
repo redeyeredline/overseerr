@@ -8,6 +8,7 @@ on:
 jobs:
   semantic-release:
     name: Tag and release latest version
+    if: github.event.repository.fork == false
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -100,7 +101,7 @@ jobs:
   discord:
     name: Send Discord Notification
     needs: semantic-release
-    if: always()
+    if: always() && github.event.repository.fork == false
     runs-on: ubuntu-22.04
     steps:
       - name: Get Build Job Status

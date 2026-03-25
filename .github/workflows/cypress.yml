@@ -10,6 +10,8 @@ on:
 
 jobs:
   cypress-run:
+    # Upstream secrets (CYPRESS_RECORD_KEY, etc.); skip on forks — use docker-ghcr-custom for images.
+    if: github.event.repository.fork == false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

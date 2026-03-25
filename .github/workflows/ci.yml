@@ -11,7 +11,7 @@ on:
 jobs:
   test:
     name: Lint & Test Build
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.event.repository.fork == false
     runs-on: ubuntu-22.04
     container: node:18.18.2-alpine
     steps:
@@ -30,7 +30,7 @@ jobs:
 
   build_and_push:
     name: Build & Publish Docker Images
-    if: github.ref == 'refs/heads/develop' && !contains(github.event.head_commit.message, '[skip ci]')
+    if: github.ref == 'refs/heads/develop' && !contains(github.event.head_commit.message, '[skip ci]') && github.event.repository.fork == false
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -68,7 +68,7 @@ jobs:
   discord:
     name: Send Discord Notification
     needs: build_and_push
-    if: always() && github.event_name != 'pull_request' && !contains(github.event.head_commit.message, '[skip ci]')
+    if: always() && github.event_name != 'pull_request' && !contains(github.event.head_commit.message, '[skip ci]') && github.event.repository.fork == false
     runs-on: ubuntu-22.04
     steps:
       - name: Get Build Job Status
