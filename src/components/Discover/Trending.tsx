@@ -25,7 +25,9 @@ const Trending = () => {
     fetchMore,
     error,
   } = useDiscover<MovieResult | TvResult | PersonResult>(
-    '/api/v1/discover/trending'
+    '/api/v1/discover/trending',
+    undefined,
+    { hideAvailable: true }
   );
 
   if (error) {

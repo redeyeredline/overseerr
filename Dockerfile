@@ -19,7 +19,7 @@ RUN CYPRESS_INSTALL_BINARY=0 yarn install --frozen-lockfile --network-timeout 10
 
 COPY . ./
 
-ARG COMMIT_TAG
+ARG COMMIT_TAG=local
 ENV COMMIT_TAG=${COMMIT_TAG}
 
 RUN yarn build
@@ -31,7 +31,8 @@ RUN rm -rf src server .next/cache
 
 RUN touch config/DOCKER
 
-RUN echo "{\"commitTag\": \"${COMMIT_TAG}\"}" > committag.json
+# Ensure commitTag is always set to "local" for custom builds to prevent update checks
+RUN echo '{"commitTag": "local"}' > committag.json
 
 
 FROM node:18.18.2-alpine
@@ -43,7 +44,11 @@ RUN apk add --no-cache tzdata tini && rm -rf /tmp/*
 # copy from build image
 COPY --from=BUILD_IMAGE /app ./
 
-ENTRYPOINT [ "/sbin/tini", "--" ]
+# Copy and set up entrypoint script
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+ENTRYPOINT [ "/sbin/tini", "--", "/docker-entrypoint.sh" ]
 CMD [ "yarn", "start" ]
 
 EXPOSE 5055

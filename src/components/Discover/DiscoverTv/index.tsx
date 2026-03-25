@@ -58,9 +58,13 @@ const DiscoverTv = () => {
     titles,
     fetchMore,
     error,
-  } = useDiscover<TvResult, never, FilterOptions>('/api/v1/discover/tv', {
-    ...preparedFilters,
-  });
+  } = useDiscover<TvResult, never, FilterOptions>(
+    '/api/v1/discover/tv',
+    {
+      ...preparedFilters,
+    },
+    { hideAvailable: true }
+  );
 
   if (error) {
     return <Error statusCode={500} />;

@@ -37,7 +37,9 @@ const DiscoverWatchlist = () => {
         : router.query.userId
         ? `user/${router.query.userId}`
         : 'discover'
-    }/watchlist`
+    }/watchlist`,
+    undefined,
+    { hideAvailable: true }
   );
 
   if (error) {

@@ -33,7 +33,11 @@ const DiscoverMovieLanguage = () => {
         name: string;
       };
     }
-  >(`/api/v1/discover/movies/language/${router.query.language}`);
+  >(
+    `/api/v1/discover/movies/language/${router.query.language}`,
+    undefined,
+    { hideAvailable: true }
+  );
 
   if (error) {
     return <Error statusCode={500} />;

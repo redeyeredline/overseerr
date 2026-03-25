@@ -28,6 +28,7 @@ import {
 import { DiscoverSliderType } from '@server/constants/discover';
 import type DiscoverSlider from '@server/entity/DiscoverSlider';
 import axios from 'axios';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { useToasts } from 'react-toast-notifications';
@@ -49,6 +50,7 @@ const messages = defineMessages({
   customizediscover: 'Customize Discover',
   stopediting: 'Stop Editing',
   createnewslider: 'Create New Slider',
+  standupcomedy: 'Stand-Up Comedy',
 });
 
 const Discover = () => {
@@ -122,6 +124,16 @@ const Discover = () => {
   return (
     <>
       <PageTitle title={intl.formatMessage(messages.discover)} />
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex-1"></div>
+        <Link href="/discover/movies?keywords=9716">
+          <a>
+            <Button buttonType="primary" className="ml-2">
+              {intl.formatMessage(messages.standupcomedy)}
+            </Button>
+          </a>
+        </Link>
+      </div>
       {hasPermission(Permission.ADMIN) && (
         <>
           {isEditing && (

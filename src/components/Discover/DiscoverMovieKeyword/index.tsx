@@ -30,7 +30,8 @@ const DiscoverMovieKeyword = () => {
     `/api/v1/discover/movies`,
     {
       keywords: encodeURIExtraParams(router.query.keywords as string),
-    }
+    },
+    { hideAvailable: true }
   );
 
   if (error) {

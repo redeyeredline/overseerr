@@ -4,40 +4,42 @@ import PageTitle from '@app/components/Common/PageTitle';
 import type { FilterOptions } from '@app/components/Discover/constants';
 import { prepareFilterValues } from '@app/components/Discover/constants';
 import useDiscover from '@app/hooks/useDiscover';
+import { encodeURIExtraParams } from '@app/hooks/useDiscover';
 import { useUpdateQueryParams } from '@app/hooks/useUpdateQueryParams';
 import globalMessages from '@app/i18n/globalMessages';
 import Error from '@app/pages/_error';
 import { BarsArrowDownIcon } from '@heroicons/react/24/solid';
 import type { SortOptions as TMDBSortOptions } from '@server/api/themoviedb';
-import type { TvNetwork } from '@server/models/common';
-import type { TvResult } from '@server/models/Search';
+import type { MovieResult } from '@server/models/Search';
 import { useRouter } from 'next/router';
 import { defineMessages, useIntl } from 'react-intl';
 
 const messages = defineMessages({
-  networkSeries: '{network} Series',
+  standupcomedy: 'Stand-Up Comedy',
   sortPopularityAsc: 'Popularity Ascending',
   sortPopularityDesc: 'Popularity Descending',
-  sortFirstAirDateAsc: 'First Air Date Ascending',
-  sortFirstAirDateDesc: 'First Air Date Descending',
+  sortReleaseDateAsc: 'Release Date Ascending',
+  sortReleaseDateDesc: 'Release Date Descending',
   sortTmdbRatingAsc: 'TMDB Rating Ascending',
   sortTmdbRatingDesc: 'TMDB Rating Descending',
   sortTitleAsc: 'Title (A-Z) Ascending',
   sortTitleDesc: 'Title (Z-A) Descending',
 });
 
-const NetworkSortOptions: Record<string, TMDBSortOptions> = {
+const StandUpSortOptions: Record<string, TMDBSortOptions> = {
   PopularityAsc: 'popularity.asc',
   PopularityDesc: 'popularity.desc',
-  FirstAirDateAsc: 'first_air_date.asc',
-  FirstAirDateDesc: 'first_air_date.desc',
+  ReleaseDateAsc: 'release_date.asc',
+  ReleaseDateDesc: 'release_date.desc',
   TmdbRatingAsc: 'vote_average.asc',
   TmdbRatingDesc: 'vote_average.desc',
+  TitleAsc: 'original_title.asc',
+  TitleDesc: 'original_title.desc',
 };
 
-const DiscoverTvNetwork = () => {
-  const router = useRouter();
+const StandUpComedyPage = () => {
   const intl = useIntl();
+  const router = useRouter();
   const updateQueryParams = useUpdateQueryParams({});
 
   const preparedFilters = prepareFilterValues(router.query);
@@ -50,11 +52,11 @@ const DiscoverTvNetwork = () => {
     titles,
     fetchMore,
     error,
-    firstResultData,
-  } = useDiscover<TvResult, { network: TvNetwork }, FilterOptions>(
-    `/api/v1/discover/tv/network/${router.query.networkId}`,
+  } = useDiscover<MovieResult, { keywords: unknown[] }, FilterOptions>(
+    '/api/v1/discover/movies',
     {
-      sortBy: preparedFilters.sortBy || NetworkSortOptions.PopularityDesc,
+      keywords: encodeURIExtraParams('9716'),
+      sortBy: preparedFilters.sortBy || StandUpSortOptions.PopularityDesc,
     },
     { hideAvailable: true }
   );
@@ -65,27 +67,13 @@ const DiscoverTvNetwork = () => {
 
   const title = isLoadingInitialData
     ? intl.formatMessage(globalMessages.loading)
-    : intl.formatMessage(messages.networkSeries, {
-        network: firstResultData?.network.name,
-      });
+    : intl.formatMessage(messages.standupcomedy);
 
   return (
     <>
       <PageTitle title={title} />
       <div className="mb-4 flex flex-col justify-between lg:flex-row lg:items-end">
-        <Header>
-          {firstResultData?.network.logoPath ? (
-            <div className="mb-6 flex justify-center">
-              <img
-                src={`//image.tmdb.org/t/p/w780_filter(duotone,ffffff,bababa)${firstResultData.network.logoPath}`}
-                alt={firstResultData.network.name}
-                className="max-h-24 sm:max-h-32"
-              />
-            </div>
-          ) : (
-            title
-          )}
-        </Header>
+        <Header>{title}</Header>
         <div className="mt-2 flex flex-grow flex-col sm:flex-row lg:flex-grow-0">
           <div className="mb-2 flex flex-grow sm:mb-0 lg:flex-grow-0">
             <span className="inline-flex cursor-default items-center rounded-l-md border border-r-0 border-gray-500 bg-gray-800 px-3 text-gray-100 sm:text-sm">
@@ -95,26 +83,32 @@ const DiscoverTvNetwork = () => {
               id="sortBy"
               name="sortBy"
               className="rounded-r-only"
-              value={preparedFilters.sortBy || NetworkSortOptions.PopularityDesc}
+              value={preparedFilters.sortBy || StandUpSortOptions.PopularityDesc}
               onChange={(e) => updateQueryParams('sortBy', e.target.value)}
             >
-              <option value={NetworkSortOptions.PopularityDesc}>
+              <option value={StandUpSortOptions.PopularityDesc}>
                 {intl.formatMessage(messages.sortPopularityDesc)}
               </option>
-              <option value={NetworkSortOptions.PopularityAsc}>
+              <option value={StandUpSortOptions.PopularityAsc}>
                 {intl.formatMessage(messages.sortPopularityAsc)}
               </option>
-              <option value={NetworkSortOptions.FirstAirDateDesc}>
-                {intl.formatMessage(messages.sortFirstAirDateDesc)}
+              <option value={StandUpSortOptions.ReleaseDateDesc}>
+                {intl.formatMessage(messages.sortReleaseDateDesc)}
               </option>
-              <option value={NetworkSortOptions.FirstAirDateAsc}>
-                {intl.formatMessage(messages.sortFirstAirDateAsc)}
+              <option value={StandUpSortOptions.ReleaseDateAsc}>
+                {intl.formatMessage(messages.sortReleaseDateAsc)}
               </option>
-              <option value={NetworkSortOptions.TmdbRatingDesc}>
+              <option value={StandUpSortOptions.TmdbRatingDesc}>
                 {intl.formatMessage(messages.sortTmdbRatingDesc)}
               </option>
-              <option value={NetworkSortOptions.TmdbRatingAsc}>
+              <option value={StandUpSortOptions.TmdbRatingAsc}>
                 {intl.formatMessage(messages.sortTmdbRatingAsc)}
+              </option>
+              <option value={StandUpSortOptions.TitleAsc}>
+                {intl.formatMessage(messages.sortTitleAsc)}
+              </option>
+              <option value={StandUpSortOptions.TitleDesc}>
+                {intl.formatMessage(messages.sortTitleDesc)}
               </option>
             </select>
           </div>
@@ -133,4 +127,4 @@ const DiscoverTvNetwork = () => {
   );
 };
 
-export default DiscoverTvNetwork;
+export default StandUpComedyPage;

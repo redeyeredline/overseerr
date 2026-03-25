@@ -33,7 +33,11 @@ const DiscoverTvLanguage = () => {
         name: string;
       };
     }
-  >(`/api/v1/discover/tv/language/${router.query.language}`);
+  >(
+    `/api/v1/discover/tv/language/${router.query.language}`,
+    undefined,
+    { hideAvailable: true }
+  );
 
   if (error) {
     return <Error statusCode={500} />;

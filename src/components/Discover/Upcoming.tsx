@@ -21,7 +21,11 @@ const UpcomingMovies = () => {
     titles,
     fetchMore,
     error,
-  } = useDiscover<MovieResult>('/api/v1/discover/movies/upcoming');
+  } = useDiscover<MovieResult>(
+    '/api/v1/discover/movies/upcoming',
+    undefined,
+    { hideAvailable: true }
+  );
 
   if (error) {
     return <Error statusCode={500} />;

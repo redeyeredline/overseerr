@@ -219,8 +219,10 @@ discoverRoutes.get<{ genreId: string }>(
         return next({ status: 404, message: 'Genre not found.' });
       }
 
+      const query = QueryFilterOptions.parse(req.query);
       const data = await tmdb.getDiscoverMovies({
         page: Number(req.query.page),
+        sortBy: query.sortBy as SortOptions,
         language: (req.query.language as string) ?? req.locale,
         genre: req.params.genreId as string,
       });
@@ -261,13 +263,22 @@ discoverRoutes.get<{ genreId: string }>(
 discoverRoutes.get<{ studioId: string }>(
   '/movies/studio/:studioId',
   async (req, res, next) => {
-    const tmdb = new TheMovieDb();
+    const tmdb = createTmdbWithRegionLanguage(req.user);
 
     try {
       const studio = await tmdb.getStudio(Number(req.params.studioId));
 
+      const queryResult = QueryFilterOptions.safeParse(req.query);
+      if (!queryResult.success) {
+        return next({
+          status: 400,
+          message: 'Invalid query parameters.',
+        });
+      }
+      const query = queryResult.data;
       const data = await tmdb.getDiscoverMovies({
-        page: Number(req.query.page),
+        page: Number(req.query.page) || 1,
+        sortBy: query.sortBy as SortOptions | undefined,
         language: (req.query.language as string) ?? req.locale,
         studio: req.params.studioId as string,
       });
@@ -495,8 +506,10 @@ discoverRoutes.get<{ genreId: string }>(
         return next({ status: 404, message: 'Genre not found.' });
       }
 
+      const query = QueryFilterOptions.parse(req.query);
       const data = await tmdb.getDiscoverTv({
         page: Number(req.query.page),
+        sortBy: query.sortBy as SortOptions,
         language: (req.query.language as string) ?? req.locale,
         genre: req.params.genreId,
       });
@@ -542,8 +555,10 @@ discoverRoutes.get<{ networkId: string }>(
     try {
       const network = await tmdb.getNetwork(Number(req.params.networkId));
 
+      const query = QueryFilterOptions.parse(req.query);
       const data = await tmdb.getDiscoverTv({
         page: Number(req.query.page),
+        sortBy: query.sortBy as SortOptions,
         language: (req.query.language as string) ?? req.locale,
         network: Number(req.params.networkId),
       });

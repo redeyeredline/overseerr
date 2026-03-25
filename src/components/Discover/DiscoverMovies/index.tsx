@@ -60,7 +60,8 @@ const DiscoverMovies = () => {
     error,
   } = useDiscover<MovieResult, unknown, FilterOptions>(
     '/api/v1/discover/movies',
-    preparedFilters
+    preparedFilters,
+    { hideAvailable: true }
   );
   const [showFilters, setShowFilters] = useState(false);
 

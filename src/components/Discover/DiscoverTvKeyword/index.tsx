@@ -30,7 +30,8 @@ const DiscoverTvKeyword = () => {
     `/api/v1/discover/tv`,
     {
       keywords: encodeURIExtraParams(router.query.keywords as string),
-    }
+    },
+    { hideAvailable: true }
   );
 
   if (error) {
